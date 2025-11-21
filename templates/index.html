@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP Q&A System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>NLP Question & Answering System</h1>
+            <p>Powered by LLM API</p>
+        </header>
+
+        <main>
+            <div class="chat-container">
+                <div id="chat-history" class="chat-history">
+                    <!-- Messages will appear here -->
+                    <div class="message system-message">
+                        Hello! Ask me anything.
+                    </div>
+                </div>
+
+                <form id="qa-form" class="input-area">
+                    <input type="text" id="question" name="question" placeholder="Type your question here..." required
+                        autocomplete="off">
+                    <button type="submit" id="submit-btn">Send</button>
+                </form>
+            </div>
+        </main>
+
+        <footer>
+            <p>Project by [Soboyejo Oluwalase] - [23CD034363]</p>
+        </footer>
+    </div>
+
+    <script>
+        const form = document.getElementById('qa-form');
+        const chatHistory = document.getElementById('chat-history');
+        const questionInput = document.getElementById('question');
+        const submitBtn = document.getElementById('submit-btn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const question = questionInput.value.trim();
+            if (!question) return;
+
+            // Add user message to chat
+            addMessage(question, 'user-message');
+            questionInput.value = '';
+            submitBtn.disabled = true;
+            submitBtn.textContent = '...';
+
+            try {
+                const formData = new FormData();
+                formData.append('question', question);
+
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    addMessage('Error: ' + data.error, 'system-message error');
+                } else {
+                    // Optional: Show processed question if required by assignment
+                    // addMessage('Processed: ' + data.processed_question, 'system-message debug');
+                    addMessage(data.answer, 'bot-message');
+                }
+            } catch (error) {
+                addMessage('Error connecting to server.', 'system-message error');
+                console.error('Error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send';
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+        });
+
+        function addMessage(text, className) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${className}`;
+            msgDiv.textContent = text;
+            chatHistory.appendChild(msgDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>
