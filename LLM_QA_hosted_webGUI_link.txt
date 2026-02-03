@@ -1,4 +1,4 @@
-Name: [Your Name]
-Matric Number: [Your Matric Number]
-Live URL: [Link to your hosted app, e.g., on Render or PythonAnywhere]
-GitHub Repository: [Link to your GitHub repo]
+Name: Soboyejo Oluwalase
+Matric Number: 23CD034363
+Live URL: https://nlp-qa-system-23cd034363.onrender.com
+GitHub Repository: https://github.com/jothamsl/NLP-QA-System-23CD034363

@@ -20,21 +20,21 @@ def index():
 @app.route('/ask', methods=['POST'])
 def ask():
     user_input = request.form.get('question')
-    
+
     if not user_input:
         return jsonify({'error': 'No question provided'}), 400
-    
+
     # 1. Preprocess
     processed_text = preprocess_input(user_input)
-    
+
     # 2. Get Response
     # We need to handle the case where the CLI script might rely on a global variable set in main()
-    # But in our CLI script, get_llm_response checks os.getenv or the global. 
-    # Since we are in a new process/context, we rely on os.getenv("LLM_API_KEY") being set 
+    # But in our CLI script, get_llm_response checks os.getenv or the global.
+    # Since we are in a new process/context, we rely on os.getenv("LLM_API_KEY") being set
     # or we can set it here if we had a config file.
-    
+
     answer = get_llm_response(processed_text)
-    
+
     return jsonify({
         'original_question': user_input,
         'processed_question': processed_text,
@@ -42,4 +42,5 @@ def ask():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port, debug=False)
